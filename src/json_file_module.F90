@@ -289,16 +289,23 @@
         procedure :: MAYBEWRAP(json_file_get_logical)
         procedure :: MAYBEWRAP(json_file_get_string)
         procedure :: MAYBEWRAP(json_file_get_integer_vec)
+        procedure :: MAYBEWRAP(json_file_get_integer_matrix)
 #ifndef REAL32
         procedure :: MAYBEWRAP(json_file_get_real32_vec)
+        procedure :: MAYBEWRAP(json_file_get_real32_matrix)
 #endif
         procedure :: MAYBEWRAP(json_file_get_real_vec)
+        procedure :: MAYBEWRAP(json_file_get_real_matrix)
 #ifdef REAL128
         procedure :: MAYBEWRAP(json_file_get_real64_vec)
+        procedure :: MAYBEWRAP(json_file_get_real64_matrix)
 #endif
         procedure :: MAYBEWRAP(json_file_get_logical_vec)
+        procedure :: MAYBEWRAP(json_file_get_logical_matrix)
         procedure :: MAYBEWRAP(json_file_get_string_vec)
+        procedure :: MAYBEWRAP(json_file_get_string_matrix)
         procedure :: MAYBEWRAP(json_file_get_alloc_string_vec)
+        procedure :: MAYBEWRAP(json_file_get_alloc_string_matrix)
         procedure :: json_file_get_root
 
         !add:
@@ -315,15 +322,21 @@
         procedure :: MAYBEWRAP(json_file_add_logical)
         procedure :: MAYBEWRAP(json_file_add_string)
         procedure :: MAYBEWRAP(json_file_add_integer_vec)
+        procedure :: MAYBEWRAP(json_file_add_integer_matrix)
 #ifndef REAL32
         procedure :: MAYBEWRAP(json_file_add_real32_vec)
+        procedure :: MAYBEWRAP(json_file_add_real32_matrix)
 #endif
         procedure :: MAYBEWRAP(json_file_add_real_vec)
+        procedure :: MAYBEWRAP(json_file_add_real_matrix)
 #ifdef REAL128
         procedure :: MAYBEWRAP(json_file_add_real64_vec)
+        procedure :: MAYBEWRAP(json_file_add_real64_matrix)
 #endif
         procedure :: MAYBEWRAP(json_file_add_logical_vec)
+        procedure :: MAYBEWRAP(json_file_add_logical_matrix)
         procedure :: MAYBEWRAP(json_file_add_string_vec)
+        procedure :: MAYBEWRAP(json_file_add_string_matrix)
 #ifdef USE_UCS4
         procedure :: json_file_add_string_path_ascii
         procedure :: json_file_add_string_value_ascii
@@ -1080,7 +1093,7 @@
 !      variable is not found.
 
     subroutine json_file_variable_matrix_info(me,path,is_matrix,found,&
-                                        var_type,n_sets,set_size,name)
+                                        var_type,n_sets,set_size,is_uniform, name)
 
     implicit none
 
@@ -1095,9 +1108,9 @@
                                                      !! rows if using row-major order)
     integer(IK),intent(out),optional    :: set_size  !! size of each data set (i.e., matrix
                                                      !! cols if using row-major order)
+    logical(LK), intent(out) :: is_uniform           !! true if all data sets have the same size
     character(kind=CK,len=:),allocatable,intent(out),optional :: name !! variable name
 
-    call me%core%matrix_info(me%p,path,is_matrix,found,var_type,n_sets,set_size,name)
 
     end subroutine json_file_variable_matrix_info
 !*****************************************************************************************
@@ -1111,7 +1124,7 @@
 !      variable is not found.
 
     subroutine wrap_json_file_variable_matrix_info(me,path,is_matrix,found,&
-                                                   var_type,n_sets,set_size,name)
+                                                   var_type,n_sets,set_size,is_uniform,name)
 
     implicit none
 
@@ -1126,9 +1139,10 @@
                                                       !! rows if using row-major order)
     integer(IK),intent(out),optional     :: set_size  !! size of each data set (i.e., matrix
                                                       !! cols if using row-major order)
+    logical(LK), intent(out) :: is_uniform           !! true if all data sets have the same size
     character(kind=CK,len=:),allocatable,intent(out),optional :: name !! variable name
 
-    call me%matrix_info(to_unicode(path),is_matrix,found,var_type,n_sets,set_size,name)
+    call me%matrix_info(to_unicode(path),is_matrix,found,var_type,n_sets,set_size,is_uniform,name)
 
     end subroutine wrap_json_file_variable_matrix_info
 !*****************************************************************************************
@@ -1509,7 +1523,6 @@
 
     end subroutine json_file_get_integer_vec
 !*****************************************************************************************
-
 !*****************************************************************************************
 !>
 !  Alternate version of [[json_file_get_integer_vec]], where "path" is kind=CDK.
@@ -1528,7 +1541,25 @@
 
     end subroutine wrap_json_file_get_integer_vec
 !*****************************************************************************************
+    subroutine json_file_get_integer_matrix(me, path, mat, found, default)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CK,len=*),intent(in) :: path
+        integer(IK),dimension(:,:),allocatable,intent(out) :: mat
+        logical(LK),intent(out),optional :: found
+        integer(IK),dimension(:,:),intent(in),optional :: default
+        
+    end subroutine json_file_get_integer_matrix
 
+    subroutine wrap_json_file_get_integer_matrix(me, path, mat, found, default)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CDK,len=*),intent(in) :: path
+        integer(IK),dimension(:,:),allocatable,intent(out) :: mat
+        logical(LK),intent(out),optional :: found
+        integer(IK),dimension(:,:),intent(in),optional :: default
+        
+    end subroutine wrap_json_file_get_integer_matrix
 !*****************************************************************************************
 !> author: Jacob Williams
 !  date: 12/9/2013
@@ -1609,6 +1640,25 @@
     end subroutine wrap_json_file_get_real_vec
 !*****************************************************************************************
 
+    subroutine json_file_get_real_matrix(me, path, mat, found, default)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CK,len=*),intent(in) :: path
+        real(RK),dimension(:,:),allocatable,intent(out) :: mat
+        logical(LK),intent(out),optional :: found
+        real(RK),dimension(:,:),intent(in),optional :: default
+        
+    end subroutine json_file_get_real_matrix
+
+    subroutine wrap_json_file_get_real_matrix(me, path, mat, found, default)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CK,len=*),intent(in) :: path
+        real(RK),dimension(:,:),allocatable,intent(out) :: mat
+        logical(LK),intent(out),optional :: found
+        real(RK),dimension(:,:),intent(in),optional :: default
+        
+    end subroutine wrap_json_file_get_real_matrix
 #ifndef REAL32
 !*****************************************************************************************
 !> author: Jacob Williams
@@ -1689,6 +1739,30 @@
 
     end subroutine wrap_json_file_get_real32_vec
 !*****************************************************************************************
+    subroutine json_file_get_real32_matrix(me, path, vec, found, default)
+
+    implicit none
+
+    class(json_file),intent(inout)                    :: me
+    character(kind=CK,len=*),intent(in)               :: path  !! the path to the variable
+    real(real32),dimension(:,:),allocatable,intent(out) :: vec   !! the value vector
+    logical(LK),intent(out),optional                  :: found !! if it was really found
+    real(real32),dimension(:),intent(in),optional     :: default
+
+
+    end subroutine json_file_get_real32_matrix
+    subroutine wrap_json_file_get_real32_matrix(me, path, vec, found, default)
+
+    implicit none
+
+    class(json_file),intent(inout)                    :: me
+    character(kind=CK,len=*),intent(in)               :: path  !! the path to the variable
+    real(real32),dimension(:,:),allocatable,intent(out) :: vec   !! the value vector
+    logical(LK),intent(out),optional                  :: found !! if it was really found
+    real(real32),dimension(:),intent(in),optional     :: default
+
+
+    end subroutine wrap_json_file_get_real32_matrix
 #endif
 
 #ifdef REAL128
@@ -1731,7 +1805,22 @@
 
     end subroutine wrap_json_file_get_real64
 !*****************************************************************************************
-
+    subroutine json_file_get_real64_matrix(me, path, vec, found, default)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CK,len=*),intent(in) :: path
+        real(real64),dimension(:,:),allocatable,intent(out) :: vec
+        logical(LK),intent(out),optional :: found
+        real(real64),dimension(:,:),intent(in),optional :: default
+    end subroutine json_file_get_real64_matrix
+    subroutine wrap_json_file_get_real64_matrix(me, path, vec, found, default)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CK,len=*),intent(in) :: path
+        real(real64),dimension(:,:),allocatable,intent(out) :: vec
+        logical(LK),intent(out),optional :: found
+        real(real64),dimension(:,:),intent(in),optional :: default
+    end subroutine wrap_json_file_get_real64_matrix
 !*****************************************************************************************
 !> author: Jacob Williams
 !  date: 1/21/2019
@@ -1852,7 +1941,24 @@
 
     end subroutine wrap_json_file_get_logical_vec
 !*****************************************************************************************
-
+    subroutine json_file_get_logical_matrix(me, path, mat, found, default)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CK,len=*),intent(in) :: path
+        logical(LK),dimension(:,:),allocatable,intent(out) :: mat
+        logical(LK),intent(out),optional :: found
+        logical(LK),dimension(:,:),intent(in),optional :: default
+        
+    end subroutine json_file_get_logical_matrix
+    subroutine wrap_json_file_get_logical_matrix(me, path, mat, found, default)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CK,len=*),intent(in) :: path
+        logical(LK),dimension(:,:),allocatable,intent(out) :: mat
+        logical(LK),intent(out),optional :: found
+        logical(LK),dimension(:,:),intent(in),optional :: default
+        
+    end subroutine wrap_json_file_get_logical_matrix
 !*****************************************************************************************
 !> author: Jacob Williams
 !  date: 12/9/2013
@@ -1933,7 +2039,32 @@
 
     end subroutine wrap_json_file_get_string_vec
 !*****************************************************************************************
+    subroutine json_file_get_string_matrix(me, path, vec, found, default)
 
+    implicit none
+
+    class(json_file),intent(inout)                                :: me
+    character(kind=CK,len=*),intent(in)                           :: path  !! the path to the variable
+    character(kind=CK,len=*),dimension(:,:),allocatable,intent(out) :: vec   !! value vector
+    logical(LK),intent(out),optional                              :: found !! if it was really found
+    character(kind=CK,len=*),dimension(:),intent(in),optional     :: default
+
+    !call me%core%get(me%p, path, vec, found, default)
+
+    end subroutine json_file_get_string_matrix
+    subroutine wrap_json_file_get_string_matrix(me, path, vec, found, default)
+
+    implicit none
+
+    class(json_file),intent(inout)                                :: me
+    character(kind=CK,len=*),intent(in)                           :: path  !! the path to the variable
+    character(kind=CK,len=*),dimension(:,:),allocatable,intent(out) :: vec   !! value vector
+    logical(LK),intent(out),optional                              :: found !! if it was really found
+    character(kind=CK,len=*),dimension(:),intent(in),optional     :: default
+
+    !call me%core%get(me%p, path, vec, found, default)
+
+    end subroutine wrap_json_file_get_string_matrix
 !*****************************************************************************************
 !> author: Jacob Williams
 !  date: 12/17/2016
@@ -1985,7 +2116,41 @@
 
     end subroutine wrap_json_file_get_alloc_string_vec
 !*****************************************************************************************
+    subroutine json_file_get_alloc_string_matrix(me, path, vec, ilen, found, default, default_ilen)
 
+    implicit none
+
+    class(json_file),intent(inout)      :: me
+    character(kind=CK,len=*),intent(in) :: path !! the path to the variable
+    character(kind=CK,len=:),dimension(:,:),allocatable,intent(out) :: vec !! value vector
+    integer(IK),dimension(:),allocatable,intent(out) :: ilen !! the actual length
+                                                             !! of each character
+                                                             !! string in the array
+    logical(LK),intent(out),optional :: found
+    character(kind=CK,len=*),dimension(:),intent(in),optional :: default
+    integer(IK),dimension(:),intent(in),optional :: default_ilen !! the actual
+                                                                 !! length of `default`
+
+
+    end subroutine json_file_get_alloc_string_matrix
+
+    subroutine wrap_json_file_get_alloc_string_matrix(me, path, vec, ilen, found, default, default_ilen)
+
+    implicit none
+
+    class(json_file),intent(inout)      :: me
+    character(kind=CK,len=*),intent(in) :: path !! the path to the variable
+    character(kind=CK,len=:),dimension(:,:),allocatable,intent(out) :: vec !! value vector
+    integer(IK),dimension(:),allocatable,intent(out) :: ilen !! the actual length
+                                                             !! of each character
+                                                             !! string in the array
+    logical(LK),intent(out),optional :: found
+    character(kind=CK,len=*),dimension(:),intent(in),optional :: default
+    integer(IK),dimension(:),intent(in),optional :: default_ilen !! the actual
+                                                                 !! length of `default`
+
+
+    end subroutine wrap_json_file_get_alloc_string_matrix
 !*****************************************************************************************
 !> author: Jacob Williams
 !
@@ -2155,7 +2320,22 @@
 
     end subroutine wrap_json_file_add_integer_vec
 !*****************************************************************************************
-
+    subroutine json_file_add_integer_matrix(me, path, mat, found, was_created)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CK,len=*),intent(in) :: path
+        integer(IK),dimension(:,:),intent(in) :: mat
+        logical(LK),intent(out),optional :: found
+        logical(LK),intent(out),optional :: was_created
+    end subroutine json_file_add_integer_matrix
+    subroutine wrap_json_file_add_integer_matrix(me, path, mat, found, was_created)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CK,len=*),intent(in) :: path
+        integer(IK),dimension(:,:),intent(in) :: mat
+        logical(LK),intent(out),optional :: found
+        logical(LK),intent(out),optional :: was_created
+    end subroutine wrap_json_file_add_integer_matrix
 !*****************************************************************************************
 !> author: Jacob Williams
 !
@@ -2240,6 +2420,22 @@
     end subroutine wrap_json_file_add_real_vec
 !*****************************************************************************************
 
+    subroutine json_file_add_real_matrix(me, path, mat, found, was_created)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CK,len=*),intent(in) :: path
+        real(RK),dimension(:,:),intent(in) :: mat
+        logical(LK),intent(out),optional :: found
+        logical(LK),intent(out),optional :: was_created
+    end subroutine json_file_add_real_matrix
+    subroutine wrap_json_file_add_real_matrix(me, path, mat, found, was_created)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CK,len=*),intent(in) :: path
+        real(RK),dimension(:,:),intent(in) :: mat
+        logical(LK),intent(out),optional :: found
+        logical(LK),intent(out),optional :: was_created
+    end subroutine wrap_json_file_add_real_matrix
 #ifndef REAL32
 !*****************************************************************************************
 !> author: Jacob Williams
@@ -2320,6 +2516,22 @@
 
     end subroutine wrap_json_file_add_real32_vec
 !*****************************************************************************************
+    subroutine json_file_add_real32_matrix(me, path, mat, found, was_created)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CK,len=*),intent(in) :: path
+        real(real32),dimension(:,:),intent(in) :: mat
+        logical(LK),intent(out),optional :: found
+        logical(LK),intent(out),optional :: was_created
+    end subroutine json_file_add_real32_matrix
+    subroutine wrap_json_file_add_real32_matrix(me, path, mat, found, was_created)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CK,len=*),intent(in) :: path
+        real(real32),dimension(:,:),intent(in) :: mat
+        logical(LK),intent(out),optional :: found
+        logical(LK),intent(out),optional :: was_created
+    end subroutine wrap_json_file_add_real32_matrix
 #endif
 
 #ifdef REAL128
@@ -2402,6 +2614,23 @@
 
     end subroutine wrap_json_file_add_real64_vec
 !*****************************************************************************************
+    subroutine json_file_add_real64_matrix(me, path, mat, found, was_created)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CK,len=*),intent(in) :: path
+        real(real64),dimension(:,:),intent(in) :: mat
+        logical(LK),intent(out),optional :: found
+        logical(LK),intent(out),optional :: was_created
+    end subroutine json_file_add_real64_matrix
+    subroutine wrap_json_file_add_real64_matrix(me, path, mat, found, was_created)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CK,len=*),intent(in) :: path
+        real(real64),dimension(:,:),intent(in) :: mat
+        logical(LK),intent(out),optional :: found
+        logical(LK),intent(out),optional :: was_created
+    end subroutine wrap_json_file_add_real64_matrix
+
 #endif
 
 !*****************************************************************************************
@@ -2488,6 +2717,22 @@
     end subroutine wrap_json_file_add_logical_vec
 !*****************************************************************************************
 
+    subroutine json_file_add_logical_matrix(me, path, mat, found, was_created)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CK,len=*),intent(in) :: path
+        logical(LK),dimension(:,:),intent(in) :: mat
+        logical(LK),intent(out),optional :: found
+        logical(LK),intent(out),optional :: was_created
+    end subroutine json_file_add_logical_matrix
+    subroutine wrap_json_file_add_logical_matrix(me, path, mat, found, was_created)
+        implicit none 
+        class(json_file),intent(inout) :: me
+        character(kind=CK,len=*),intent(in) :: path
+        logical(LK),dimension(:,:),intent(in) :: mat
+        logical(LK),intent(out),optional :: found
+        logical(LK),intent(out),optional :: was_created
+    end subroutine wrap_json_file_add_logical_matrix
 !*****************************************************************************************
 !> author: Jacob Williams
 !
@@ -2649,7 +2894,49 @@
 
     end subroutine wrap_json_file_add_string_vec
 !*****************************************************************************************
+    subroutine json_file_add_string_matrix(me,path,vec,found,&
+                                            was_created,ilen,trim_str,adjustl_str)
 
+    implicit none
+
+    class(json_file),intent(inout)                   :: me
+    character(kind=CK,len=*),intent(in)              :: path         !! the path to the variable
+    character(kind=CK,len=*),dimension(:,:),intent(in) :: vec          !! the value vector
+    logical(LK),intent(out),optional                 :: found        !! if the variable was found
+    logical(LK),intent(out),optional                 :: was_created  !! if the variable had to be created
+    integer(IK),dimension(:),intent(in),optional     :: ilen         !! the string lengths of each
+                                                                     !! element in `value`. If not present,
+                                                                     !! the full `len(value)` string is added
+                                                                     !! for each element.
+    logical(LK),intent(in),optional                  :: trim_str     !! if TRIM() should be called for each element
+    logical(LK),intent(in),optional                  :: adjustl_str  !! if ADJUSTL() should be called for each element
+                                                                     !! (note that ADJUSTL is done before TRIM)
+
+
+
+    end subroutine json_file_add_string_matrix
+
+    subroutine wrap_json_file_add_string_matrix(me,path,vec,found,&
+                                            was_created,ilen,trim_str,adjustl_str)
+
+    implicit none
+
+    class(json_file),intent(inout)                   :: me
+    character(kind=CK,len=*),intent(in)              :: path         !! the path to the variable
+    character(kind=CK,len=*),dimension(:,:),intent(in) :: vec          !! the value vector
+    logical(LK),intent(out),optional                 :: found        !! if the variable was found
+    logical(LK),intent(out),optional                 :: was_created  !! if the variable had to be created
+    integer(IK),dimension(:),intent(in),optional     :: ilen         !! the string lengths of each
+                                                                     !! element in `value`. If not present,
+                                                                     !! the full `len(value)` string is added
+                                                                     !! for each element.
+    logical(LK),intent(in),optional                  :: trim_str     !! if TRIM() should be called for each element
+    logical(LK),intent(in),optional                  :: adjustl_str  !! if ADJUSTL() should be called for each element
+                                                                     !! (note that ADJUSTL is done before TRIM)
+
+
+
+    end subroutine wrap_json_file_add_string_matrix
 !*****************************************************************************************
 !> author: Jacob Williams
 !

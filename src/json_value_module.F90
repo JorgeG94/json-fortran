@@ -320,17 +320,22 @@
 #ifndef REAL32
                                  MAYBEWRAP(json_value_add_real32), &
                                  MAYBEWRAP(json_value_add_real32_vec), &
+                                 MAYBEWRAP(json_value_add_real32_matruix), &
 #endif
                                  MAYBEWRAP(json_value_add_real), &
                                  MAYBEWRAP(json_value_add_real_vec), &
+                                 MAYBEWRAP(json_value_add_real_matrix), &
 #ifdef REAL128
                                  MAYBEWRAP(json_value_add_real64), &
                                  MAYBEWRAP(json_value_add_real64_vec), &
+                                 MAYBEWRAP(json_value_add_real64_matrix), &
 #endif
                                  MAYBEWRAP(json_value_add_logical), &
                                  MAYBEWRAP(json_value_add_logical_vec), &
+                                 MAYBEWRAP(json_value_add_logical_matrix), &
                                  MAYBEWRAP(json_value_add_string), &
-                                 MAYBEWRAP(json_value_add_string_vec)
+                                 MAYBEWRAP(json_value_add_string_vec), &
+                                 MAYBEWRAP(json_value_add_string_matrix)
 #ifdef USE_UCS4
         generic,public :: add => json_value_add_string_name_ascii, &
                                  json_value_add_string_val_ascii, &
@@ -342,20 +347,26 @@
         procedure,private :: MAYBEWRAP(json_value_add_integer)
         procedure,private :: MAYBEWRAP(json_value_add_null)
         procedure,private :: MAYBEWRAP(json_value_add_integer_vec)
+        procedure, private :: MAYBEWRAP(json_value_add_integer_matrix)
 #ifndef REAL32
         procedure,private :: MAYBEWRAP(json_value_add_real32)
         procedure,private :: MAYBEWRAP(json_value_add_real32_vec)
+        procedure,private :: MAYBEWRAP(json_value_add_read32_matrix)
 #endif
         procedure,private :: MAYBEWRAP(json_value_add_real)
         procedure,private :: MAYBEWRAP(json_value_add_real_vec)
+        procedure,private :: MAYBEWRAP(json_value_add_real_matrix)
 #ifdef REAL128
         procedure,private :: MAYBEWRAP(json_value_add_real64)
         procedure,private :: MAYBEWRAP(json_value_add_real64_vec)
+        procedure,private :: MAYBEWRAP(json_value_add_real64_matrix)
 #endif
         procedure,private :: MAYBEWRAP(json_value_add_logical)
         procedure,private :: MAYBEWRAP(json_value_add_logical_vec)
+        procedure, private :: MAYBEWRAP(json_value_add_logical_matrix)
         procedure,private :: MAYBEWRAP(json_value_add_string)
         procedure,private :: MAYBEWRAP(json_value_add_string_vec)
+        procedure,private :: MAYBEWRAP(json_value_add_string_matrix)
 #ifdef USE_UCS4
         procedure,private :: json_value_add_string_name_ascii
         procedure,private :: json_value_add_string_val_ascii
